@@ -6,9 +6,10 @@ import { Product } from "../../data/products";
 
 interface ProductBottleScrollProps {
     product: Product;
+    onLoaded?: () => void;
 }
 
-export default function ProductBottleScroll({ product }: ProductBottleScrollProps) {
+export default function ProductBottleScroll({ product, onLoaded }: ProductBottleScrollProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [images, setImages] = useState<HTMLImageElement[]>([]);
@@ -29,6 +30,7 @@ export default function ProductBottleScroll({ product }: ProductBottleScrollProp
     useEffect(() => {
         if (product.staticHeroImage) {
             setImagesLoaded(true); // Immediate load for static image
+            if (onLoaded) onLoaded();
             return;
         }
 
@@ -52,10 +54,11 @@ export default function ProductBottleScroll({ product }: ProductBottleScrollProp
             }
             setImages(loadedImages);
             setImagesLoaded(true);
+            if (onLoaded) onLoaded();
         };
 
         loadImages();
-    }, [product, product.staticHeroImage]);
+    }, [product, product.staticHeroImage]); // Removed onLoaded from dependencies to avoid loop, it's a stable callback usually
 
     // 3. Canvas Rendering (Only if NOT using static hero)
     useEffect(() => {

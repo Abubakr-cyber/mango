@@ -6,10 +6,11 @@ import { products } from "../../data/products";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductBottleScroll from "../components/ProductBottleScroll";
-import ProductTextOverlays from "../components/ProductTextOverlays";
+import LoadingScreen from "../components/LoadingScreen";
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const product = products[currentIndex];
 
   useEffect(() => {
@@ -27,8 +28,18 @@ export default function Home() {
     setCurrentIndex((prev) => (prev - 1 + products.length) % products.length);
   };
 
+  // Callback when bottle images are ready
+  const handleImageLoad = () => {
+    // Small delay to ensure smooth transition
+    setTimeout(() => setIsLoading(false), 500);
+  };
+
   return (
     <main className="min-h-screen font-sans selection:bg-orange-500 selection:text-white">
+      <AnimatePresence>
+        {isLoading && <LoadingScreen key="loader" />}
+      </AnimatePresence>
+
       <Navbar />
 
       <AnimatePresence mode="wait">
@@ -41,7 +52,7 @@ export default function Home() {
         >
           {/* --- SCROLLYTELLING HERO SECTION (400vh) --- */}
           <section className="relative">
-            <ProductBottleScroll product={product} />
+            <ProductBottleScroll product={product} onLoaded={handleImageLoad} />
             <ProductTextOverlays product={product} />
           </section>
 
