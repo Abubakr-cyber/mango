@@ -81,20 +81,17 @@ export default function ProductBottleScroll({ product }: ProductBottleScrollProp
 
             let renderWidth, renderHeight, offsetX, offsetY;
 
-            // "Contain" fit logic with ZOOM to crop watermark
-            const ZOOM = 1.15; // 15% zoom to push "Veo" watermark off-screen
+            // "Cover" fit logic (fills the screen, crops edges)
+            const scaleX = canvas.width / img.width;
+            const scaleY = canvas.height / img.height;
+            const linkScale = Math.max(scaleX, scaleY);
 
-            if (layoutAspectRatio > imageAspectRatio) {
-                renderHeight = canvas.height * ZOOM;
-                renderWidth = img.width * (renderHeight / img.height);
-                offsetX = (canvas.width - renderWidth) / 2;
-                offsetY = (canvas.height - renderHeight) / 2;
-            } else {
-                renderWidth = canvas.width * ZOOM;
-                renderHeight = img.height * (renderWidth / img.width);
-                offsetX = (canvas.width - renderWidth) / 2;
-                offsetY = (canvas.height - renderHeight) / 2;
-            }
+            const ZOOM = 1.0; // No extra zoom needed if covering, but can adjust if needed
+
+            renderWidth = img.width * linkScale * ZOOM;
+            renderHeight = img.height * linkScale * ZOOM;
+            offsetX = (canvas.width - renderWidth) / 2;
+            offsetY = (canvas.height - renderHeight) / 2;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
