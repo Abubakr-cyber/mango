@@ -38,13 +38,13 @@ export const products: Product[] = [
         subName: "Офтоби холис.",
         price: "12 сомонӣ",
         description: "Бо витамини C бой - Бе маводи консервантӣ - 100% мева",
-        folderPath: "/images/mango 1_000",
+        folderPath: "/images/mango_1_000",
         themeColor: "#FFB74D",
         gradient: "linear-gradient(135deg, #FFB74D 0%, #FFA726 100%)",
 
         // Adapted for provided assets
         frameCount: 49,
-        fileNamePrefix: "mango 1_",
+        fileNamePrefix: "mango_1_",
         fileExtension: "jpg",
 
         features: ["Бо витамини C бой", "Бе маводи консервантӣ", "100% мева"],
