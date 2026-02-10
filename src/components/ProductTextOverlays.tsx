@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import { Product } from "../../data/products";
 import { useRef } from "react";
 
@@ -20,73 +20,83 @@ export default function ProductTextOverlays({ product }: ProductTextOverlaysProp
     // Let's use the latter for simplicity and robustness.
 
     return (
-        <div className="absolute inset-0 pointer-events-none z-10">
-            {/* Section 1 - Intro (approx 10-30% scroll) */}
-            <ScrollSection top="10%" opacity={[0, 1, 0]}>
-                <h2 className="text-8xl font-black uppercase tracking-tighter text-white drop-shadow-lg">
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+            {/* Section 1 - Intro */}
+            <ScrollSection top="10%" themeColor={product.themeColor}>
+                <motion.h2 className="text-8xl font-black uppercase tracking-tighter text-white" variants={textVariants}>
                     {product.section1.title}
-                </h2>
-                <p className="text-3xl font-light text-white/90 mt-4">
+                </motion.h2>
+                <motion.p className="text-3xl font-light text-white/90 mt-4" variants={textVariants}>
                     {product.section1.subtitle}
-                </p>
+                </motion.p>
             </ScrollSection>
 
-            {/* Section 2 - Ingredients (approx 35-55% scroll) */}
-            <ScrollSection top="35%" opacity={[0, 1, 0]}>
-                <h2 className="text-6xl font-black text-white drop-shadow-md max-w-4xl text-center">
+            {/* Section 2 - Ingredients */}
+            <ScrollSection top="35%" themeColor={product.themeColor}>
+                <motion.h2 className="text-6xl font-black text-white max-w-4xl text-center" variants={textVariants}>
                     {product.section2.title}
-                </h2>
-                <p className="text-2xl font-medium text-white/80 mt-6 max-w-2xl text-center">
+                </motion.h2>
+                <motion.p className="text-2xl font-medium text-white/80 mt-6 max-w-2xl text-center" variants={textVariants}>
                     {product.section2.subtitle}
-                </p>
+                </motion.p>
             </ScrollSection>
 
-            {/* Section 3 - Benefits (approx 60-80% scroll) */}
-            <ScrollSection top="60%" opacity={[0, 1, 0]}>
-                <h2 className="text-6xl font-black text-white drop-shadow-md">
+            {/* Section 3 - Benefits */}
+            <ScrollSection top="60%" themeColor={product.themeColor}>
+                <motion.h2 className="text-6xl font-black text-white" variants={textVariants}>
                     {product.section3.title}
-                </h2>
-                <p className="text-2xl font-medium text-white/80 mt-6">
+                </motion.h2>
+                <motion.p className="text-2xl font-medium text-white/80 mt-6" variants={textVariants}>
                     {product.section3.subtitle}
-                </p>
+                </motion.p>
             </ScrollSection>
 
-            {/* Section 4 - Pure (approx 85-95% scroll) */}
-            <ScrollSection top="85%" opacity={[0, 1, 1]}>
-                <h2 className="text-7xl font-black uppercase text-white drop-shadow-xl">
+            {/* Section 4 - Pure */}
+            <ScrollSection top="85%" themeColor={product.themeColor}>
+                <motion.h2 className="text-7xl font-black uppercase text-white" variants={textVariants}>
                     {product.section4.title}
-                </h2>
+                </motion.h2>
             </ScrollSection>
         </div>
     );
 }
 
+const textVariants: Variants = {
+    hidden: { opacity: 0, y: 100, filter: "blur(20px)" },
+    visible: {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px) drop-shadow(0 0 10px rgba(255,255,255,0.5))"
+    },
+    exit: {
+        opacity: 0,
+        y: -150,
+        filter: "blur(20px) drop-shadow(0 50px 40px rgba(255,255,255,0.8))", // The "Glow Down" effect
+        transition: { duration: 0.8, ease: "easeInOut" }
+    }
+};
+
 function ScrollSection({
     children,
     top,
-    opacity
+    themeColor
 }: {
     children: React.ReactNode;
     top: string;
-    opacity: number[]
+    themeColor?: string;
 }) {
-    // We need to hook into the parent's scroll progress. 
-    // Since we are inside the huge 400vh div, we can use `useScroll` with offsets relative to this viewport.
-
-    // Actually, simple CSS sticky or absolute positioning with motion.div whileInView might be easier
-    // BUT user asked for "useTransform to fade them In/Out based on scroll progress"
-    // So we need access to the scroll progress.
-    // The cleanest way is to pass the ref or progress down, OR use absolute positioning + viewport trigger.
-
-    // Let's use `whileInView` for fade in/out as it effectively maps to scroll position without complex wiring.
     return (
-        <div className="absolute left-0 w-full flex flex-col items-center justify-center p-12 text-center" style={{ top }}>
+        <div className="absolute left-0 w-full flex flex-col items-center justify-center p-12 text-center mix-blend-overlay" style={{ top }}>
             <motion.div
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                viewport={{ amount: 0.5, margin: "-100px" }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                initial="hidden"
+                whileInView="visible"
+                exit="exit"
+                viewport={{ amount: 0.4, margin: "-100px 0px -100px 0px" }}
+                transition={{ duration: 1, ease: "easeOut", staggerChildren: 0.2 }}
+                style={{
+                    // Optional: Add a subtle ambient glow based on product color
+                    textShadow: `0 0 30px ${themeColor || "rgba(255,255,255,0.3)"}`
+                }}
             >
                 {children}
             </motion.div>
