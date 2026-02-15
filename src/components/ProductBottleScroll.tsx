@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Product } from "../../data/products";
 
 interface ProductBottleScrollProps {
@@ -15,16 +15,22 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
     const [images, setImages] = useState<HTMLImageElement[]>([]);
     const [imagesLoaded, setImagesLoaded] = useState(false);
 
-    // 1. Scroll Progress
+    // 1. Scroll Progress with Smoothing
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"],
     });
 
+    const smoothProgress = useSpring(scrollYProgress, {
+        stiffness: 100,
+        damping: 30,
+        restDelta: 0.001
+    });
+
     // 4. Parallax & Scale for Static Hero (New High-Quality Mode)
-    const heroScale = useTransform(scrollYProgress, [0, 1], [0.8, 1.2]);
-    const heroY = useTransform(scrollYProgress, [0, 1], [0, 200]);
-    const heroRotate = useTransform(scrollYProgress, [0, 1], [0, 15]);
+    const heroScale = useTransform(smoothProgress, [0, 1], [0.8, 1.2]);
+    const heroY = useTransform(smoothProgress, [0, 1], [0, 200]);
+    const heroRotate = useTransform(smoothProgress, [0, 1], [0, 15]);
 
     // 2. Preload Images (Only if NOT using static hero)
     useEffect(() => {
@@ -84,15 +90,21 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
 
             let renderWidth, renderHeight, offsetX, offsetY;
 
-            // "Cover" fit logic (fills the screen, crops edges)
-            const scaleX = canvas.width / img.width;
-            const scaleY = canvas.height / img.height;
-            const linkScale = Math.max(scaleX, scaleY);
+            // Better Responsive Logic: "Contain" on Mobile/Portrait, "Cover" on Desktop
+            const isPortrait = layoutAspectRatio < 0.8;
 
-            const ZOOM = 1.0; // No extra zoom needed if covering, but can adjust if needed
+            if (isPortrait) {
+                // Contain for mobile so bottle is always fully visible
+                const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+                renderWidth = img.width * scale * 0.9;
+                renderHeight = img.height * scale * 0.9;
+            } else {
+                // Cover for desktop for immersive feel
+                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
+                renderWidth = img.width * scale;
+                renderHeight = img.height * scale;
+            }
 
-            renderWidth = img.width * linkScale * ZOOM;
-            renderHeight = img.height * linkScale * ZOOM;
             offsetX = (canvas.width - renderWidth) / 2;
             offsetY = (canvas.height - renderHeight) / 2;
 
@@ -102,8 +114,10 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
 
         // Responsive Canvas Sizing
         const resizeCanvas = () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
+            canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
+            canvas.style.width = `${window.innerWidth}px`;
+            canvas.style.height = `${window.innerHeight}px`;
             renderFrame(0); // Initial render
         };
 
@@ -111,7 +125,7 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
         resizeCanvas();
 
         // Animation Loop subscribed to scroll
-        const unsubscribe = scrollYProgress.on("change", (latest: number) => {
+        const unsubscribe = smoothProgress.on("change", (latest: number) => {
             const frameIndex = Math.min(
                 images.length - 1,
                 Math.floor(latest * images.length)
@@ -123,10 +137,10 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
             window.removeEventListener("resize", resizeCanvas);
             unsubscribe();
         };
-    }, [images, imagesLoaded, scrollYProgress, product.staticHeroImage]);
+    }, [images, imagesLoaded, smoothProgress, product.staticHeroImage]);
 
     return (
-        <div ref={containerRef} className="relative h-[400vh]">
+        <div ref={containerRef} className="relative h-[400vh] bg-transparent">
             <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden">
                 {product.staticHeroImage ? (
                     <motion.img
@@ -136,12 +150,15 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
                         style={{ scale: heroScale, y: heroY, rotate: heroRotate }}
                     />
                 ) : (
-                    <canvas ref={canvasRef} className="block w-full h-full object-contain contrast-115 saturate-115 drop-shadow-2xl" />
+                    <canvas ref={canvasRef} className="block w-full h-full object-contain contrast-115 saturate-115 drop-shadow-2xl transition-opacity duration-500" />
                 )}
                 {/* Loading State */}
                 {!imagesLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm z-50">
-                        <div className="animate-pulse text-xl font-bold text-orange-500">Blending...</div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-xl z-50">
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                            <div className="text-white text-sm font-medium tracking-widest uppercase">Коркард...</div>
+                        </div>
                     </div>
                 )}
             </div>

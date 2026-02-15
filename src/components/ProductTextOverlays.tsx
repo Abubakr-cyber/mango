@@ -22,38 +22,38 @@ export default function ProductTextOverlays({ product }: ProductTextOverlaysProp
     return (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
             {/* Section 1 - Intro */}
-            <ScrollSection top="10%" themeColor={product.themeColor}>
-                <motion.h2 className="text-8xl font-black uppercase tracking-tighter text-white" variants={textVariants}>
+            <ScrollSection top="15%" themeColor={product.themeColor}>
+                <motion.h2 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter text-white drop-shadow-2xl" variants={textVariants}>
                     {product.section1.title}
                 </motion.h2>
-                <motion.p className="text-3xl font-light text-white/90 mt-4" variants={textVariants}>
+                <motion.p className="text-xl md:text-3xl font-light text-white/90 mt-4 tracking-widest uppercase" variants={textVariants}>
                     {product.section1.subtitle}
                 </motion.p>
             </ScrollSection>
 
             {/* Section 2 - Ingredients */}
-            <ScrollSection top="35%" themeColor={product.themeColor}>
-                <motion.h2 className="text-6xl font-black text-white max-w-4xl text-center" variants={textVariants}>
+            <ScrollSection top="40%" themeColor={product.themeColor}>
+                <motion.h2 className="text-3xl md:text-6xl font-black text-white max-w-4xl text-center leading-tight transition-all" variants={textVariants}>
                     {product.section2.title}
                 </motion.h2>
-                <motion.p className="text-2xl font-medium text-white/80 mt-6 max-w-2xl text-center" variants={textVariants}>
+                <motion.p className="text-lg md:text-2xl font-medium text-white/80 mt-6 max-w-2xl text-center leading-relaxed" variants={textVariants}>
                     {product.section2.subtitle}
                 </motion.p>
             </ScrollSection>
 
             {/* Section 3 - Benefits */}
-            <ScrollSection top="60%" themeColor={product.themeColor}>
-                <motion.h2 className="text-6xl font-black text-white" variants={textVariants}>
+            <ScrollSection top="65%" themeColor={product.themeColor}>
+                <motion.h2 className="text-3xl md:text-6xl font-black text-white text-center" variants={textVariants}>
                     {product.section3.title}
                 </motion.h2>
-                <motion.p className="text-2xl font-medium text-white/80 mt-6" variants={textVariants}>
+                <motion.p className="text-lg md:text-2xl font-medium text-white/80 mt-6 text-center max-w-xl" variants={textVariants}>
                     {product.section3.subtitle}
                 </motion.p>
             </ScrollSection>
 
             {/* Section 4 - Pure */}
-            <ScrollSection top="85%" themeColor={product.themeColor}>
-                <motion.h2 className="text-7xl font-black uppercase text-white" variants={textVariants}>
+            <ScrollSection top="88%" themeColor={product.themeColor}>
+                <motion.h2 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase text-white drop-shadow-2xl" variants={textVariants}>
                     {product.section4.title}
                 </motion.h2>
             </ScrollSection>
@@ -62,17 +62,22 @@ export default function ProductTextOverlays({ product }: ProductTextOverlaysProp
 }
 
 const textVariants: Variants = {
-    hidden: { opacity: 0, y: 100, filter: "blur(20px)" },
+    hidden: { opacity: 0, y: 50, filter: "blur(10px)" },
     visible: {
         opacity: 1,
         y: 0,
-        filter: "blur(0px) drop-shadow(0 0 10px rgba(255,255,255,0.5))"
+        filter: "blur(0px) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 20
+        }
     },
     exit: {
         opacity: 0,
-        y: -150,
-        filter: "blur(20px) drop-shadow(0 50px 40px rgba(255,255,255,0.8))", // The "Glow Down" effect
-        transition: { duration: 0.8, ease: "easeInOut" }
+        y: -50,
+        filter: "blur(10px)",
+        transition: { duration: 0.5, ease: "easeInOut" }
     }
 };
 
@@ -86,17 +91,12 @@ function ScrollSection({
     themeColor?: string;
 }) {
     return (
-        <div className="absolute left-0 w-full flex flex-col items-center justify-center p-12 text-center mix-blend-overlay" style={{ top }}>
+        <div className="absolute left-0 w-full flex flex-col items-center justify-center px-6 md:px-12 text-center" style={{ top }}>
             <motion.div
                 initial="hidden"
                 whileInView="visible"
-                exit="exit"
-                viewport={{ amount: 0.4, margin: "-100px 0px -100px 0px" }}
-                transition={{ duration: 1, ease: "easeOut", staggerChildren: 0.2 }}
-                style={{
-                    // Optional: Add a subtle ambient glow based on product color
-                    textShadow: `0 0 30px ${themeColor || "rgba(255,255,255,0.3)"}`
-                }}
+                viewport={{ amount: 0.8, margin: "-10% 0px -10% 0px" }}
+                transition={{ staggerChildren: 0.1 }}
             >
                 {children}
             </motion.div>
