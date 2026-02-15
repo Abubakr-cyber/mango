@@ -11,8 +11,14 @@ import LoadingScreen from "../components/LoadingScreen";
 
 export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const product = products[currentIndex];
+
+  useEffect(() => {
+    // Only show the full-screen loader for the very first visit
+    const timer = setTimeout(() => setInitialLoading(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     // Reset scroll when product changes
@@ -32,13 +38,13 @@ export default function Home() {
   // Callback when bottle images are ready
   const handleImageLoad = () => {
     // Small delay to ensure smooth transition
-    setTimeout(() => setIsLoading(false), 500);
+    // Removed setIsLoading(false) as per new loading strategy
   };
 
   return (
-    <main className="min-h-screen font-sans selection:bg-orange-500 selection:text-white">
-      <AnimatePresence>
-        {isLoading && <LoadingScreen key="loader" />}
+    <main className="relative min-h-screen bg-white text-gray-900 overflow-x-hidden selection:bg-orange-500 selection:text-white">
+      <AnimatePresence mode="wait">
+        {initialLoading && <LoadingScreen key="loader" />}
       </AnimatePresence>
 
       <Navbar />
@@ -145,7 +151,6 @@ export default function Home() {
               </div>
             </div>
           </section>
-
         </motion.div>
       </AnimatePresence>
 
