@@ -8,12 +8,6 @@ export interface Product {
     folderPath: string;
     themeColor: string;
     gradient: string;
-    // Dynamic Image Config
-    frameCount: number;
-    fileNamePrefix: string;
-    fileExtension: string;
-    staticHeroImage?: string;
-
     features: string[];
     stats: { label: string; val: string }[];
     section1: { title: string; subtitle: string };
@@ -37,16 +31,10 @@ export const products: Product[] = [
         name: "Крем Манго",
         subName: "Нӯшокии офтобӣ.",
         price: "12 сомонӣ",
-        description: "Бо витамини C бой — Бидуни консервантҳо — 100% табиӣ",
-        folderPath: "/images/mango_1_000",
+        description: "Бо витамини C бой — Бидуни консервантҳо — 100% меваи табиӣ",
+        folderPath: "/images/mango",
         themeColor: "#FFB74D",
         gradient: "linear-gradient(135deg, #FFB74D 0%, #FFA726 100%)",
-
-        // Adapted for provided assets
-        frameCount: 49,
-        fileNamePrefix: "mango_1_",
-        fileExtension: "jpg",
-
         features: ["Бо витамини C бой", "Бе маводи консервантӣ", "100% меваи табиӣ"],
         stats: [{ label: "Қанд", val: "0г" }, { label: "Об", val: "0%" }, { label: "Мағзи мева", val: "100%" }],
         section1: { title: "Крем Манго.", subtitle: "Лаззати офтоб." },
@@ -79,14 +67,8 @@ export const products: Product[] = [
         folderPath: "/images/chocolate",
         themeColor: "#8D6E63",
         gradient: "linear-gradient(135deg, #8D6E63 0%, #5D4037 100%)",
-
-        // Defaults per prompt spec
-        frameCount: 120,
-        fileNamePrefix: "",
-        fileExtension: "webp",
-
         features: ["Какаои олӣ", "Шири бодом", "Протеини растанӣ"],
-        stats: [{ label: "Маҳсулоти ширӣ", val: "0%" }, { label: "Протеин", val: "12г" }, { label: "Какаои холис", val: "100%" }],
+        stats: [{ label: "Маҳсулоти ширӣ", val: "0%" }, { label: "Протеин", val: "12г" }, { label: "Какао", val: "100%" }],
         section1: { title: "Шоколади Голландӣ.", subtitle: "Нарм ва гуворо." },
         section2: { title: "Камолоти лаззат.", subtitle: "Какаои торики асил ва шири бодоми қаймоқӣ барои як таҷрибаи беҳамто омехта шудаанд." },
         section3: { title: "Неруи растанӣ.", subtitle: "Бо протеини табиии растанӣ барои дастгирии тарзи ҳаёти фаъоли Шумо." },
@@ -117,12 +99,6 @@ export const products: Product[] = [
         folderPath: "/images/pomegranate",
         themeColor: "#E57373",
         gradient: "linear-gradient(135deg, #E57373 0%, #C62828 100%)",
-
-        // Defaults per prompt spec
-        frameCount: 120,
-        fileNamePrefix: "",
-        fileExtension: "webp",
-
         features: ["Фоида барои дил", "Фишори сард", "Тақвияти масуният"],
         stats: [{ label: "Иловаҳо", val: "0%" }, { label: "Витаминҳо", val: "A, C, K" }, { label: "Тозагӣ", val: "100%" }],
         section1: { title: "Анори Ёқутӣ.", subtitle: "Ҷавоҳироти табиат." },
@@ -131,7 +107,7 @@ export const products: Product[] = [
         section4: { title: "Шарбати пок, ҳаёти пок.", subtitle: "" },
         detailsSection: {
             title: "Эликсири Сурх",
-            description: "Ҳар як шиша шарбати зиёда аз 1 кг анори олиро дар бар мегирад. Мо усули фишори нармро истифода мебарем, то шарбатро бидуни майда кардани пӯсти талх ҷудо намоем. Ин боиси таъми ширин ва мураккабе мегардад, ки бо дигар шарбатҳо қобили қиёс нест.",
+            description: "Ҳар як шиша шарбати зиёда аз 1 кг анори олиро дар бар мегирад. Мо усули фишори нармро использоват мекунем, то шарбатро бидуни майда кардани пӯсти талх ҷудо намоем. Ин боиси таъми ширин ва мураккабе мегардад, ки бо дигар шарбатҳо қобили қиёс нест.",
             imageAlt: "Тафсилоти Анор"
         },
         freshnessSection: {

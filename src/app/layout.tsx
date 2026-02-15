@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google"; // 1. Import Plus Jakarta Sans font
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
-// 2. Configure font
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
+const outfit = Outfit({ subsets: ["latin"] });
 
-// 3. Set Metadata
 export const metadata: Metadata = {
-  title: "Tajik Mango | Ояндаи тароват",
-  description: "Ояндаи шарбати тозаро бо Tajik Mango ҳис кунед.",
+  title: "Nano Banana | Ояндаи тароват",
+  description: "Насли нави шарбатҳои табиии фишори сард. 100% мева, бидуни созиш.",
 };
 
 export default function RootLayout({
@@ -17,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tg">
-      <body className={jakarta.className}>{children}</body>
+    <html lang="tg" className="no-scrollbar">
+      <body className={outfit.className}>{children}</body>
     </html>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useScroll } from "framer-motion";
 import { Product } from "../../data/products";
 
 interface ProductBottleScrollProps {
@@ -15,46 +15,25 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
     const [images, setImages] = useState<HTMLImageElement[]>([]);
     const [imagesLoaded, setImagesLoaded] = useState(false);
 
-    // 1. Scroll Progress with Smoothing
+    // Scroll progress tracker
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end end"],
     });
 
-    const smoothProgress = useSpring(scrollYProgress, {
-        stiffness: 120,
-        damping: 30,
-        restDelta: 0.001
-    });
-
-    // 4. Parallax & Scale for Static Hero (New High-Quality Mode)
-    const heroScale = useTransform(smoothProgress, [0, 1], [0.8, 1.2]);
-    const heroY = useTransform(smoothProgress, [0, 1], [0, 200]);
-    const heroRotate = useTransform(smoothProgress, [0, 1], [0, 15]);
-
-    // 2. Preload Images (Only if NOT using static hero)
+    // 1. Preload 120 Images
     useEffect(() => {
-        if (product.staticHeroImage) {
-            setImagesLoaded(true); // Immediate load for static image
-            if (onLoaded) onLoaded();
-            return;
-        }
-
         const loadImages = async () => {
             setImagesLoaded(false);
             const loadedImages: HTMLImageElement[] = [];
+            const frameCount = 120;
 
-            for (let i = 0; i < product.frameCount; i++) {
+            for (let i = 1; i <= frameCount; i++) {
                 const img = new Image();
-                const frameNum = i.toString().padStart(3, "0");
-                const fileName = product.fileNamePrefix
-                    ? `${product.fileNamePrefix}${frameNum}.${product.fileExtension}`
-                    : `${i}.${product.fileExtension}`;
-
-                img.src = `${product.folderPath}/${fileName}`;
+                img.src = `${product.folderPath}/${i}.webp`;
                 await new Promise((resolve) => {
                     img.onload = resolve;
-                    img.onerror = resolve; // Continue even if error to prevent blocking
+                    img.onerror = resolve; // Continue on error
                 });
                 loadedImages.push(img);
             }
@@ -64,58 +43,43 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
         };
 
         loadImages();
-    }, [product, product.staticHeroImage]); // Removed onLoaded from dependencies to avoid loop, it's a stable callback usually
+    }, [product.folderPath, onLoaded]);
 
-    // 3. Canvas Rendering (Only if NOT using static hero)
+    // 2. Canvas Lifecycle & Scroll Mapping
     useEffect(() => {
-        if (product.staticHeroImage) return;
-
         const canvas = canvasRef.current;
         if (!canvas || !imagesLoaded || images.length === 0) return;
 
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        // Optimize for quality
         ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
 
-        // Render Logic
         const renderFrame = (index: number) => {
             const img = images[index];
-            if (!img || !img.complete || img.naturalHeight === 0) return;
+            if (!img || !img.complete) return;
 
-            const layoutAspectRatio = canvas.width / canvas.height;
-            const imageAspectRatio = img.width / img.height;
-
-            let renderWidth, renderHeight, offsetX, offsetY;
-
-            // V2.2: Aggressive "Cover" fit with additional zoom for a premium look
-            const scale = Math.max(canvas.width / img.width, canvas.height / img.height) * 1.2;
-            renderWidth = img.width * scale;
-            renderHeight = img.height * scale;
-
-            offsetX = (canvas.width - renderWidth) / 2;
-            // Slightly lower the bottle initially (move offsetY down)
-            offsetY = (canvas.height - renderHeight) / 2 + (canvas.height * 0.05);
+            // Responsive "contain" fit
+            const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
+            const x = (canvas.width / 2) - (img.width / 2) * scale;
+            const y = (canvas.height / 2) - (img.height / 2) * scale;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
         };
 
-        // Responsive Canvas Sizing
         const resizeCanvas = () => {
             canvas.width = window.innerWidth * (window.devicePixelRatio || 1);
             canvas.height = window.innerHeight * (window.devicePixelRatio || 1);
             canvas.style.width = `${window.innerWidth}px`;
             canvas.style.height = `${window.innerHeight}px`;
-            renderFrame(0); // Initial render
+            renderFrame(0);
         };
 
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        // Animation Loop subscribed to scroll - V2.5: Direct linear mapping
+        // Subscribe to scroll changes using Framer Motion
         const unsubscribe = scrollYProgress.on("change", (latest: number) => {
             const frameIndex = Math.min(
                 images.length - 1,
@@ -128,39 +92,20 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
             window.removeEventListener("resize", resizeCanvas);
             unsubscribe();
         };
-    }, [images, imagesLoaded, scrollYProgress, product.staticHeroImage]);
+    }, [images, imagesLoaded, scrollYProgress]);
 
     return (
-        <div ref={containerRef} className="relative h-[400vh] bg-transparent">
-            {/* V2.9: Pro Depth - Background Parallax */}
-            <div className="fixed inset-0 pointer-events-none opacity-40 overflow-hidden">
-                <motion.div
-                    style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "30%"]) }}
-                    className="absolute inset-x-0 -top-20 h-[120%] bg-gradient-to-b from-transparent via-white/5 to-transparent blur-3xl"
-                />
-            </div>
+        <div ref={containerRef} className="relative h-[500vh] bg-transparent">
+            {/* Sticky Canvas Container */}
+            <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden pointer-events-none">
+                <canvas ref={canvasRef} className="block w-full h-full object-contain" />
 
-            <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden">
-                {product.staticHeroImage ? (
-                    <motion.img
-                        src={product.staticHeroImage}
-                        alt={product.name}
-                        className="block w-full h-full object-contain contrast-125 saturate-125 drop-shadow-[0_50px_100px_rgba(0,0,0,0.4)]"
-                        style={{ scale: heroScale, y: heroY, rotate: heroRotate }}
-                    />
-                ) : (
-                    <canvas ref={canvasRef} className="block w-full h-full object-contain contrast-115 saturate-115 drop-shadow-2xl transition-opacity duration-500" />
-                )}
-                {/* Loading State - Solid overlay to hide text until ready */}
+                {/* Loading State Overlay */}
                 {!imagesLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white z-[60]">
-                        <div className="flex flex-col items-center gap-6">
-                            <motion.div
-                                className="w-16 h-16 border-4 border-orange-100 border-t-orange-500 rounded-full"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                            <div className="text-orange-950 text-xs font-black tracking-[0.3em] uppercase opacity-40">Коркард...</div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-transparent backdrop-blur-3xl z-[60]">
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+                            <div className="text-white text-xs font-bold tracking-[0.3em] uppercase">Loading Flavor...</div>
                         </div>
                     </div>
                 )}
