@@ -90,11 +90,10 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
 
             let renderWidth, renderHeight, offsetX, offsetY;
 
-            // V2.1: Use "Contain" with a slight scale-up for better visibility
-            // And ensure it stays centered vertically
-            const scale = Math.min(canvas.width / img.width, (canvas.height * 0.9) / img.height);
-            renderWidth = img.width * scale * 1.1; // Slightly larger but contained
-            renderHeight = img.height * scale * 1.1;
+            // V2.2: Aggressive "Cover" fit with additional zoom for a premium look
+            const scale = Math.max(canvas.width / img.width, canvas.height / img.height) * 1.2;
+            renderWidth = img.width * scale;
+            renderHeight = img.height * scale;
 
             offsetX = (canvas.width - renderWidth) / 2;
             // Slightly lower the bottle initially (move offsetY down)
