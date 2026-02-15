@@ -42,7 +42,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative min-h-screen bg-white text-gray-900 overflow-x-hidden selection:bg-orange-500 selection:text-white">
+    <main className="relative min-h-screen bg-white text-gray-900 selection:bg-orange-500 selection:text-white">
       <AnimatePresence mode="wait">
         {initialLoading && <LoadingScreen key="loader" />}
       </AnimatePresence>

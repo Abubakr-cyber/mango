@@ -16,7 +16,7 @@ body {
   margin: 0;
   background: var(--product-gradient);
   transition: background 0.8s ease;
-  overflow-x: hidden;
+  overflow-x: clip;
   color: #1a1a1a;
 }
 
@@ -47,6 +47,8 @@ body::before {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }

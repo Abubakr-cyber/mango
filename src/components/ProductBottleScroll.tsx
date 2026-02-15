@@ -90,23 +90,15 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
 
             let renderWidth, renderHeight, offsetX, offsetY;
 
-            // Better Responsive Logic: "Contain" on Mobile/Portrait, "Cover" on Desktop
-            const isPortrait = layoutAspectRatio < 0.8;
-
-            if (isPortrait) {
-                // Contain for mobile so bottle is always fully visible
-                const scale = Math.min(canvas.width / img.width, canvas.height / img.height);
-                renderWidth = img.width * scale * 0.9;
-                renderHeight = img.height * scale * 0.9;
-            } else {
-                // Cover for desktop for immersive feel
-                const scale = Math.max(canvas.width / img.width, canvas.height / img.height);
-                renderWidth = img.width * scale;
-                renderHeight = img.height * scale;
-            }
+            // V2.1: Use "Contain" with a slight scale-up for better visibility
+            // And ensure it stays centered vertically
+            const scale = Math.min(canvas.width / img.width, (canvas.height * 0.9) / img.height);
+            renderWidth = img.width * scale * 1.1; // Slightly larger but contained
+            renderHeight = img.height * scale * 1.1;
 
             offsetX = (canvas.width - renderWidth) / 2;
-            offsetY = (canvas.height - renderHeight) / 2;
+            // Slightly lower the bottle initially (move offsetY down)
+            offsetY = (canvas.height - renderHeight) / 2 + (canvas.height * 0.05);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, offsetX, offsetY, renderWidth, renderHeight);
@@ -140,7 +132,7 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
     }, [images, imagesLoaded, smoothProgress, product.staticHeroImage]);
 
     return (
-        <div ref={containerRef} className="relative h-[400vh] bg-transparent">
+        <div ref={containerRef} className="relative h-[500vh] bg-transparent">
             <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden">
                 {product.staticHeroImage ? (
                     <motion.img
