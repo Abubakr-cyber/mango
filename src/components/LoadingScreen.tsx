@@ -1,6 +1,5 @@
-"use client";
-
 import { motion } from "framer-motion";
+import MangoLogo from "./MangoLogo";
 
 export default function LoadingScreen() {
     return (
@@ -10,33 +9,27 @@ export default function LoadingScreen() {
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white/10 backdrop-blur-3xl"
         >
-            <div className="relative w-48 h-48 mb-12 flex items-center justify-center">
+            <div className="relative w-64 h-64 mb-12 flex items-center justify-center">
                 {/* Elegant Concentric Rings */}
                 <motion.div
-                    className="absolute inset-0 border-[1px] border-orange-500/20 rounded-full"
-                    animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
+                    className="absolute inset-0 border-[2px] border-orange-500/20 rounded-full"
+                    animate={{ scale: [1, 1.3, 1], rotate: 360 }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                 />
                 <motion.div
-                    className="absolute inset-4 border-[1px] border-orange-500/30 rounded-full"
-                    animate={{ scale: [1, 1.4], opacity: [0.5, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut", delay: 0.5 }}
+                    className="absolute inset-8 border-[1px] border-pink-500/20 rounded-full"
+                    animate={{ scale: [1, 1.2, 1], rotate: -360 }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                 />
 
-                {/* Main Logo/Icon Placeholder - Using a clean SVG or stylized text */}
+                {/* Main Logo */}
                 <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="relative z-10 flex flex-col items-center"
+                    initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
+                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                    className="relative z-10"
                 >
-                    <div className="text-4xl font-black text-orange-500 tracking-tighter mb-2">MANGO</div>
-                    <div className="w-12 h-0.5 bg-orange-500/50 rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-orange-500"
-                            animate={{ x: [-50, 50] }}
-                            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                        />
-                    </div>
+                    <MangoLogo className="w-24 h-24 drop-shadow-[0_20px_50px_rgba(255,143,0,0.4)]" />
                 </motion.div>
             </div>
 
