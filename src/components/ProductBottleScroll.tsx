@@ -22,9 +22,9 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
     });
 
     const smoothProgress = useSpring(scrollYProgress, {
-        stiffness: 100,
-        damping: 30,
-        restDelta: 0.001
+        stiffness: 60,
+        damping: 40,
+        restDelta: 0.0001
     });
 
     // 4. Parallax & Scale for Static Hero (New High-Quality Mode)
@@ -131,7 +131,7 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
     }, [images, imagesLoaded, smoothProgress, product.staticHeroImage]);
 
     return (
-        <div ref={containerRef} className="relative h-[500vh] bg-transparent">
+        <div ref={containerRef} className="relative h-[700vh] bg-transparent">
             <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden">
                 {product.staticHeroImage ? (
                     <motion.img

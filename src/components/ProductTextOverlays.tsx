@@ -52,7 +52,7 @@ export default function ProductTextOverlays({ product }: ProductTextOverlaysProp
             </ScrollSection>
 
             {/* Section 4 - Pure */}
-            <ScrollSection top="88%" themeColor={product.themeColor}>
+            <ScrollSection top="82%" themeColor={product.themeColor}>
                 <motion.h2 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase text-white drop-shadow-2xl" variants={textVariants}>
                     {product.section4.title}
                 </motion.h2>
@@ -69,7 +69,7 @@ const textVariants: Variants = {
         filter: "blur(0px) drop-shadow(0 0 20px rgba(255,255,255,0.3))",
         transition: {
             type: "spring",
-            stiffness: 100,
+            stiffness: 80,
             damping: 20
         }
     },
@@ -95,7 +95,7 @@ function ScrollSection({
             <motion.div
                 initial="hidden"
                 whileInView="visible"
-                viewport={{ amount: 0.8, margin: "-10% 0px -10% 0px" }}
+                viewport={{ amount: 0.2, margin: "-10% 0px -10% 0px" }}
                 transition={{ staggerChildren: 0.1 }}
             >
                 {children}
