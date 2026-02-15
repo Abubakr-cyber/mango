@@ -132,12 +132,20 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
 
     return (
         <div ref={containerRef} className="relative h-[400vh] bg-transparent">
+            {/* V2.9: Pro Depth - Background Parallax */}
+            <div className="fixed inset-0 pointer-events-none opacity-40 overflow-hidden">
+                <motion.div
+                    style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "30%"]) }}
+                    className="absolute inset-x-0 -top-20 h-[120%] bg-gradient-to-b from-transparent via-white/5 to-transparent blur-3xl"
+                />
+            </div>
+
             <div className="sticky top-0 left-0 w-full h-screen flex items-center justify-center overflow-hidden">
                 {product.staticHeroImage ? (
                     <motion.img
                         src={product.staticHeroImage}
                         alt={product.name}
-                        className="block w-full h-full object-contain drop-shadow-2xl"
+                        className="block w-full h-full object-contain contrast-125 saturate-125 drop-shadow-[0_50px_100px_rgba(0,0,0,0.4)]"
                         style={{ scale: heroScale, y: heroY, rotate: heroRotate }}
                     />
                 ) : (
