@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google"; // 1. Import Outfit font
+import { Plus_Jakarta_Sans } from "next/font/google"; // 1. Import Plus Jakarta Sans font
 import "./globals.css";
 
 // 2. Configure font
-const outfit = Outfit({ subsets: ["latin"] });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 // 3. Set Metadata
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="tg">
-      <body className={outfit.className}>{children}</body>
+      <body className={jakarta.className}>{children}</body>
     </html>
   );
 }
