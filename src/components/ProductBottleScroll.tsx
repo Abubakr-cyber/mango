@@ -143,12 +143,16 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
                 ) : (
                     <canvas ref={canvasRef} className="block w-full h-full object-contain contrast-115 saturate-115 drop-shadow-2xl transition-opacity duration-500" />
                 )}
-                {/* Loading State */}
+                {/* Loading State - Solid overlay to hide text until ready */}
                 {!imagesLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-xl z-50">
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-                            <div className="text-white text-sm font-medium tracking-widest uppercase">Коркард...</div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-white z-[60]">
+                        <div className="flex flex-col items-center gap-6">
+                            <motion.div
+                                className="w-16 h-16 border-4 border-orange-100 border-t-orange-500 rounded-full"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            />
+                            <div className="text-orange-950 text-xs font-black tracking-[0.3em] uppercase opacity-40">Коркард...</div>
                         </div>
                     </div>
                 )}
