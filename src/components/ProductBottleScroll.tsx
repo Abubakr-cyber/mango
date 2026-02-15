@@ -115,8 +115,8 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
 
-        // Animation Loop subscribed to scroll
-        const unsubscribe = smoothProgress.on("change", (latest: number) => {
+        // Animation Loop subscribed to scroll - V2.5: Direct linear mapping
+        const unsubscribe = scrollYProgress.on("change", (latest: number) => {
             const frameIndex = Math.min(
                 images.length - 1,
                 Math.floor(latest * images.length)
@@ -128,7 +128,7 @@ export default function ProductBottleScroll({ product, onLoaded }: ProductBottle
             window.removeEventListener("resize", resizeCanvas);
             unsubscribe();
         };
-    }, [images, imagesLoaded, smoothProgress, product.staticHeroImage]);
+    }, [images, imagesLoaded, scrollYProgress, product.staticHeroImage]);
 
     return (
         <div ref={containerRef} className="relative h-[400vh] bg-transparent">

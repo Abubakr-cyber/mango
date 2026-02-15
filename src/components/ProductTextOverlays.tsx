@@ -52,7 +52,7 @@ export default function ProductTextOverlays({ product }: ProductTextOverlaysProp
             </ScrollSection>
 
             {/* Section 4 - Pure */}
-            <ScrollSection top="92%" themeColor={product.themeColor}>
+            <ScrollSection top="75%" themeColor={product.themeColor}>
                 <motion.h2 className="text-5xl md:text-8xl lg:text-9xl font-black uppercase text-white drop-shadow-2xl" variants={textVariants}>
                     {product.section4.title}
                 </motion.h2>
